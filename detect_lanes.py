@@ -2,6 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Canny edge detector
 def canny(image):
 	gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
@@ -9,6 +10,8 @@ def canny(image):
 	canny = cv2.Canny(blur, 20, 80)
 	return canny
 
+
+# Locate ROI
 def ROI(image):
 	mask = np.zeros_like(image)
 	vertices = np.array([[(200, image.shape[0]), 
@@ -18,6 +21,7 @@ def ROI(image):
 	crop_image = cv2.bitwise_and(image, mask)
 	return crop_image
 
+# Covert world coordinates to image coordinates
 def make_coordinates(image, parameter):
 	hight = image.shape[0]
 	y1 = hight
@@ -26,12 +30,15 @@ def make_coordinates(image, parameter):
 	x2 = int((y2 - parameter[1]) / parameter[0])
 	return np.array([x1, y1, x2, y2])
 
-
+# read images
 image = cv2.imread('image/test_image.jpg')
+
+# detect lane lines
 canny_image = canny(image)
 roi_image = ROI(canny_image)
-
 lines = cv2.HoughLinesP(roi_image, 2, np.pi/180, 100, minLineLength = 40, maxLineGap = 5)
+
+# display lane lines in images
 if lines is not None:
 	left_lines = []
 	right_lines = []
@@ -55,6 +62,7 @@ if para_list is not None:
     	cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), 4)
 
 
+# show images with detected lane lines
 cv2.imshow('result', image)
 cv2.waitKey(0)
 
